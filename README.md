@@ -128,3 +128,63 @@ public class StudentDaoTest {
 
 }
 ```
+
+## docker-compose 搭建 MongoDB 分片集群
+### 规划
+#### config:
+c01: 172.20.0.11:27019
+c02: 172.20.0.12:27019
+
+#### 分片1：
+s01：172.20.0.13:27018
+s02：172.20.0.14:27018
+
+```
+# 初始化节点
+rs.initiate({ _id: "shrs01",version: 1,members: [{ _id: 0, host : "172.20.0.13:27018" }]});
+# 添加节点
+rs.add("172.20.0.14:27018");
+```
+
+#### 分片2
+s21：172.20.0.15:27018
+s22：172.20.0.16:27018
+
+```mongojs
+//初始化节点
+rs.initiate({ _id: "shrs02",version: 1,members: [{ _id: 0, host : "172.20.0.15:27018" }]});
+//添加节点
+rs.add("172.20.0.16:27018");
+```
+
+#### router
+ms：172.20.0.17:27017
+对外端口：27050
+
+##### 增加分片
+```mongojs
+sh.addShard("shrs01/172.20.0.13:27018,172.20.0.14:27018");
+sh.addShard("shrs02/172.20.0.15:27018,172.20.0.16:27018");
+```
+
+##### 创建用户
+```mongojs
+use admin;
+db.createUser({ user:'admin',pwd:'123456',roles:[ { role:'userAdminAnyDatabase', db: 'admin'},"readWriteAnyDatabase"]});
+// 尝试使用上面创建的用户信息进行连接。
+db.auth('admin', '123456');
+```
+```mongojs
+db.createUser(
+     {
+       user: "shard",
+       pwd: "123456",
+       roles: ["readWrite"]
+     }
+)
+```
+
+##### 对数据库启用分片
+```mongojs
+sh.shardCollection("shard.t_student",{"_id":"hashed","cDate":-1});
+```

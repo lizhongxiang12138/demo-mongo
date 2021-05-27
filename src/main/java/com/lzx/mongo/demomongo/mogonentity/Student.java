@@ -3,6 +3,7 @@ package com.lzx.mongo.demomongo.mogonentity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -10,7 +11,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-@Document(collection = "t_student")
+@Document(collection = "t_student_new")
 public class Student {
 
 

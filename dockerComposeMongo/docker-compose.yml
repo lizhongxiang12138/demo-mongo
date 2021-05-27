@@ -1,0 +1,133 @@
+version: '3'
+
+services:
+
+  #config
+  mongodb-config01:
+    image: mongo:latest
+    container_name: c01
+    networks:
+      mongo:
+        ipv4_address: 172.20.0.11
+    volumes:
+      - $PWD/db/mongodb-sharding/config01:/data/configdb
+    ports:
+      - "27030:27019"
+    command:
+      - /bin/bash
+      - -c
+      - mongod --bind_ip=0.0.0.0 --replSet csrs --configsvr
+
+  mongodb-config02:
+    image: mongo:latest
+    container_name: c02
+    networks:
+      mongo:
+        ipv4_address: 172.20.0.12
+    volumes:
+      - $PWD/db/mongodb-sharding/config02:/data/configdb
+    ports:
+      - "27031:27019"
+    command:
+      - /bin/bash
+      - -c
+      - mongod --bind_ip=0.0.0.0 --replSet csrs --configsvr
+
+  #shard
+  mongodb-shard01-01:
+    image: mongo:latest
+    container_name: s01
+    networks:
+      mongo:
+        ipv4_address: 172.20.0.13
+    volumes:
+      - $PWD/db/mongodb-sharding/shard01-01:/data/db
+    ports:
+      - "27040:27018"
+    depends_on:
+      - mongodb-config01
+      - mongodb-config02
+    command:
+      - /bin/bash
+      - -c
+      - mongod --bind_ip=0.0.0.0 --shardsvr --replSet shrs01
+
+  mongodb-shard01-02:
+    image: mongo:latest
+    container_name: s02
+    networks:
+      mongo:
+        ipv4_address: 172.20.0.14
+    volumes:
+      - $PWD/db/mongodb-sharding/shard01-02:/data/db
+    ports:
+      - "27041:27018"
+    depends_on:
+      - mongodb-config01
+      - mongodb-config02
+    command:
+      - /bin/bash
+      - -c
+      - mongod --bind_ip=0.0.0.0 --shardsvr --replSet shrs01
+
+  mongodb-shard02-01:
+    image: mongo:latest
+    container_name: s21
+    networks:
+      mongo:
+        ipv4_address: 172.20.0.15
+    volumes:
+      - $PWD/db/mongodb-sharding/shard02-01:/data/db
+    ports:
+      - "27042:27018"
+    depends_on:
+      - mongodb-config01
+      - mongodb-config02
+    command:
+      - /bin/bash
+      - -c
+      - mongod --bind_ip=0.0.0.0 --shardsvr --replSet shrs02
+
+  mongodb-shard02-02:
+    image: mongo:latest
+    container_name: s22
+    networks:
+      mongo:
+        ipv4_address: 172.20.0.16
+    volumes:
+      - $PWD/db/mongodb-sharding/shard02-02:/data/db
+    ports:
+      - "27043:27018"
+    depends_on:
+      - mongodb-config01
+      - mongodb-config02
+    command:
+      - /bin/bash
+      - -c
+      - mongod --bind_ip=0.0.0.0 --shardsvr --replSet shrs02
+
+  #router
+  mongodb-router:
+    image: mongo:latest
+    container_name: ms
+    networks:
+      mongo:
+        ipv4_address: 172.20.0.17
+    volumes:
+      - $PWD/db/mongodb-sharding/router:/data/db
+    ports:
+      - "27050:27017"
+    depends_on:
+      - mongodb-config01
+      - mongodb-config02
+    command:
+      - /bin/bash
+      - -c
+      - mongos --configdb csrs/172.20.0.11:27019,172.20.0.12:27019 --bind_ip=0.0.0.0
+
+networks:
+  mongo:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.10/24

@@ -3,7 +3,7 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://my_test:123456@localhost:27017/my_test
+      uri: mongodb://shard:123456@localhost:27050/shard
 logging:
   level:
     org.springframework.data.mongodb.core: DEBUG
