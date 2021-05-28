@@ -2,6 +2,8 @@ package com.lzx.mongo.demomongo.dao;
 
 
 import com.lzx.mongo.demomongo.mogonentity.Student;
+import com.lzx.mongo.demomongo.utils.RandomUtils;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -40,7 +42,9 @@ public class StudentDaoTest {
      */
     @Test
     public void save(){
+
         CountDownLatch count = new CountDownLatch(4);
+        String[] palteStr = {"Q","W","E","R","T","Y","U","P","A","S","D","F","G","H","J","K","L","Z","X","C","V","B","N","M","1","2","3","4","5","6","7","8","9","0"};
 
         new Thread(()->{
             Student student = null;
@@ -55,12 +59,23 @@ public class StudentDaoTest {
 //            } catch (InterruptedException e) {
 //                e.printStackTrace();
 //            }
-                student.setName("马云"+i);
+                student.setName("曹操"+i);
                 student.setAge("5003"+i);
-                student.setCountry("汉");
+                student.setCountry("魏国");
                 student.setJob("将军");
                 student.setCDate(new Date());
+                StringBuffer sb = new StringBuffer("魏A");
+                for(int j =0;j < 5;j++){
+                    sb.append(palteStr[RandomUtils.getRandomRange(0,palteStr.length-1)]);
+                }
+                log.info("车牌：{}",sb.toString());
+                student.setLicensePlate(sb.toString());
                 Student save = studentDao.save(student);
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 log.info(JacksonUtils.toJsonString(save));
             }
             count.countDown();
@@ -79,12 +94,23 @@ public class StudentDaoTest {
 //            } catch (InterruptedException e) {
 //                e.printStackTrace();
 //            }
-                student.setName("刘强东"+i);
+                student.setName("宋江"+i);
                 student.setAge("5003"+i);
-                student.setCountry("汉");
-                student.setJob("皇帝");
+                student.setCountry("宋朝");
+                student.setJob("土匪");
                 student.setCDate(new Date());
+                StringBuffer sb = new StringBuffer("宋A");
+                for(int j =0;j < 5;j++){
+                    sb.append(palteStr[RandomUtils.getRandomRange(0,palteStr.length-1)]);
+                }
+                log.info("车牌：{}",sb.toString());
+                student.setLicensePlate(sb.toString());
                 Student save = studentDao.save(student);
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 log.info(JacksonUtils.toJsonString(save));
             }
             count.countDown();
@@ -103,12 +129,23 @@ public class StudentDaoTest {
 //            } catch (InterruptedException e) {
 //                e.printStackTrace();
 //            }
-                student.setName("公孙策"+i);
+                student.setName("武松"+i);
                 student.setAge("5003"+i);
-                student.setCountry("汉");
-                student.setJob("军师");
+                student.setCountry("宋朝");
+                student.setJob("土匪");
                 student.setCDate(new Date());
+                StringBuffer sb = new StringBuffer("宋A");
+                for(int j =0;j < 5;j++){
+                    sb.append(palteStr[RandomUtils.getRandomRange(0,palteStr.length-1)]);
+                }
+                log.info("车牌：{}",sb.toString());
+                student.setLicensePlate(sb.toString());
                 Student save = studentDao.save(student);
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 log.info(JacksonUtils.toJsonString(save));
             }
             count.countDown();
@@ -128,12 +165,23 @@ public class StudentDaoTest {
 //            } catch (InterruptedException e) {
 //                e.printStackTrace();
 //            }
-                student.setName("赵子龙"+i);
+                student.setName("李逵"+i);
                 student.setAge("5003"+i);
-                student.setCountry("汉");
-                student.setJob("将军");
+                student.setCountry("宋朝");
+                student.setJob("土匪");
                 student.setCDate(new Date());
+                StringBuffer sb = new StringBuffer("宋A");
+                for(int j =0;j < 5;j++){
+                    sb.append(palteStr[RandomUtils.getRandomRange(0,palteStr.length-1)]);
+                }
+                log.info("车牌：{}",sb.toString());
+                student.setLicensePlate(sb.toString());
                 Student save = studentDao.save(student);
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 log.info(JacksonUtils.toJsonString(save));
             }
             count.countDown();
@@ -166,17 +214,18 @@ public class StudentDaoTest {
         //动态定义条件查询
         Criteria c = new Criteria();
         //c.and("id").is("60acc0b7df06d613edf45f");
-        c.and("name").regex(".*马云.*");
+        //c.and("name").regex("马云.*");
+        //c.and("licensePlate").is("魏APRAJ8");
         Query query = new Query(c);
         Pageable page = PageRequest.of(0, 10);
+//        long conditionCount = mongoTemplate.count(query,Student.class);
         long satrt = System.currentTimeMillis();
-        long conditionCount = mongoTemplate.count(query,Student.class);
         List<Student> students = mongoTemplate.find(query.with(page).with(Sort.by(Sort.Direction.DESC,"cDate")), Student.class);
         long end = System.currentTimeMillis();
         log.info(JacksonUtils.toJsonString(students));
         coutD = count/10000.0d;
         log.info("记录数：{} w",coutD);
-        log.info("查询用时：{} ms,符合条件记录：{}",(end - satrt),conditionCount);
+        log.info("查询用时：{} ms,符合条件记录：{}",(end - satrt),0);
     }
 
     /**
@@ -189,6 +238,19 @@ public class StudentDaoTest {
         update.set("job","蜀国将军");
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Student.class);
         log.info("更新{}条记录",updateResult.getModifiedCount());
+    }
+
+    /**
+     * 删除测试
+     */
+    @Test
+    public void delete(){
+        Criteria criteria = new Criteria();
+        Query query = new Query(criteria);
+        query.with(PageRequest.of(0,1000,Sort.by(Sort.Direction.DESC,"cDate")));
+        DeleteResult remove = mongoTemplate.remove(query, Student.class);
+        long deletedCount = remove.getDeletedCount();
+        log.info("删除的记录数：{}",deletedCount);
     }
 
 }

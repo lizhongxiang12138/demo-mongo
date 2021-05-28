@@ -186,5 +186,6 @@ db.createUser(
 
 ##### 对数据库启用分片
 ```mongojs
-sh.shardCollection("shard.t_student",{"_id":"hashed","cDate":-1});
+db.t_student_new.createIndex({"licensePlate":1});
+sh.shardCollection("shard.t_student_new",{"_id":"hashed","cDate":-1});
 ```

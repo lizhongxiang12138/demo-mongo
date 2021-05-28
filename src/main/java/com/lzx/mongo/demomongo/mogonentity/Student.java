@@ -31,4 +31,7 @@ public class Student {
 
     @Field
     private Date cDate;
+
+    private String licensePlate;
+
 }
