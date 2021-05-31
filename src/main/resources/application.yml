@@ -3,7 +3,7 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://shard:123456@localhost:27050/shard
+      uri: mongodb://shard:123456@localhost:27050/shard?maxpoolsize=100&minpoolsize=10
 logging:
   level:
     org.springframework.data.mongodb.core: DEBUG

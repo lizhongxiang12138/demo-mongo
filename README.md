@@ -169,7 +169,7 @@ s32：172.20.0.19:27018
 
 ```mongojs
 //初始化节点
-rs.initiate({ _id: "shrs03",version: 1,members: [{ _id: 0, host : "172.20.0.15:27018" }]});
+rs.initiate({ _id: "shrs03",version: 1,members: [{ _id: 0, host : "172.20.0.18:27018" }]});
 //添加节点
 rs.add("172.20.0.19:27018");
 ```
@@ -180,7 +180,7 @@ s32：172.20.0.21:27018
 
 ```mongojs
 //初始化节点
-rs.initiate({ _id: "shrs04",version: 1,members: [{ _id: 0, host : "172.20.0.15:27018" }]});
+rs.initiate({ _id: "shrs04",version: 1,members: [{ _id: 0, host : "172.20.0.20:27018" }]});
 //添加节点
 rs.add("172.20.0.21:27018");
 ```

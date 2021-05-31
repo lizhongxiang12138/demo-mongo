@@ -106,6 +106,78 @@ services:
       - -c
       - mongod --bind_ip=0.0.0.0 --shardsvr --replSet shrs02
 
+  mongodb-shard03-01:
+    image: mongo:latest
+    container_name: s31
+    networks:
+      mongo:
+        ipv4_address: 172.20.0.18
+    volumes:
+      - $PWD/db/mongodb-sharding/shard03-01:/data/db
+    ports:
+      - "27044:27018"
+    depends_on:
+      - mongodb-config01
+      - mongodb-config02
+    command:
+      - /bin/bash
+      - -c
+      - mongod --bind_ip=0.0.0.0 --shardsvr --replSet shrs03
+
+  mongodb-shard03-02:
+    image: mongo:latest
+    container_name: s32
+    networks:
+      mongo:
+        ipv4_address: 172.20.0.19
+    volumes:
+      - $PWD/db/mongodb-sharding/shard03-02:/data/db
+    ports:
+      - "27045:27018"
+    depends_on:
+      - mongodb-config01
+      - mongodb-config02
+    command:
+      - /bin/bash
+      - -c
+      - mongod --bind_ip=0.0.0.0 --shardsvr --replSet shrs03
+
+  mongodb-shard04-01:
+    image: mongo:latest
+    container_name: s41
+    networks:
+      mongo:
+        ipv4_address: 172.20.0.20
+    volumes:
+      - $PWD/db/mongodb-sharding/shard04-01:/data/db
+    ports:
+      - "27046:27018"
+    depends_on:
+      - mongodb-config01
+      - mongodb-config02
+    command:
+      - /bin/bash
+      - -c
+      - mongod --bind_ip=0.0.0.0 --shardsvr --replSet shrs04
+
+  mongodb-shard04-02:
+    image: mongo:latest
+    container_name: s42
+    networks:
+      mongo:
+        ipv4_address: 172.20.0.21
+    volumes:
+      - $PWD/db/mongodb-sharding/shard04-02:/data/db
+    ports:
+      - "27047:27018"
+    depends_on:
+      - mongodb-config01
+      - mongodb-config02
+    command:
+      - /bin/bash
+      - -c
+      - mongod --bind_ip=0.0.0.0 --shardsvr --replSet shrs04
+
   #router
   mongodb-router:
     image: mongo:latest
